@@ -25,7 +25,7 @@ You will want to import this role conditionally, perhaps as such:
 
     - hosts: all
       roles:
-      - { role: redhataccess.redhat-access-insights-client, when: ansible_os_family == 'RedHat' }
+      - { role: danvarga.redhat-access-insights-client, when: ansible_os_family == 'RedHat' }
 
 
 License
