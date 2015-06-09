@@ -1,0 +1,12 @@
+---
+
+- name: Install Red Hat Access Insights Client
+  yum: name={{ item }} state=present
+  with_items:
+      - redhat-access-insights
+
+- name: Configure Red Hat Access Insights Client
+  template: src=insights-client.conf.j2 dest=/etc/redhat-access-insights/redhat-access-insights.conf
+
+- name: Register to the Red Hat Access Insights Service
+  shell: redhat-access-insights --register

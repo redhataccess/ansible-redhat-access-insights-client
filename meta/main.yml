@@ -1,0 +1,15 @@
+---
+galaxy_info:
+    author: Dan Varga
+    description: Install Red Hat Access Insights Client
+    company: Red Hat, Inc.
+    license: MIT
+    min_ansible_version: 1.2
+    platforms:
+    - name: EL
+      versions:
+      - all
+    categories:
+    - packaging
+    - system
+    dependencies: []
