@@ -31,18 +31,20 @@ Example Use
 
 1. On a system where [Ansible is installed](http://http://docs.ansible.com/ansible/intro_installation.html), run the following command:
 
-    > ansible-galaxy install redhataccess.redhat-access-insights-client
+    ```bash
+    $ ansible-galaxy install redhataccess.redhat-access-insights-client
+    ```
 
 1. Copy the Example Playbook to a file named 'install-insights.yml'.
 
 1. Run the command, replacing 'myhost.example.com' with the name of the
    system where you want to install the insights client.
 
-    > ansible-playbook --limit=myhost.example.com install-insights.yml
+    ```bash
+    $ ansible-playbook --limit=myhost.example.com install-insights.yml
+    ```
 
+License and Author
+------------------
 
-License
--------
-
-MIT
-
+See GitHub source repo
