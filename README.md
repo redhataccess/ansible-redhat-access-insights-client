@@ -1,4 +1,4 @@
-ansible-redhat-access-insights-client
+redhat-access-insights-client
 ========
 
 Ansible role that installs, configures, and registers a system to the [Red Hat Insights service](http://access.redhat.com/insights).  This role is intended to work on RHEL 6 or RHEL 7, though it will generally work on any yum based system that has access to the redhat-access-insights RPM.
@@ -29,7 +29,7 @@ Example Playbook
 Example Use
 -----------
 
-1. On a system where [Ansible is installed](http://http://docs.ansible.com/ansible/intro_installation.html), run the following command:
+1. On a system where [Ansible is installed](http://docs.ansible.com/ansible/intro_installation.html), run the following command:
 
     ```bash
     $ ansible-galaxy install redhataccess.redhat-access-insights-client
