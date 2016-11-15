@@ -1,7 +1,7 @@
 ---
 galaxy_info:
     author: Dan Varga
-    description: Install Red Hat Access Insights Client
+    description: Install Red Hat Insights Client
     company: Red Hat, Inc.
     license: MIT
     min_ansible_version: 1.2
