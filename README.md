@@ -1,7 +1,7 @@
-redhat-access-insights-client
+redhat-insights-client
 ========
 
-Installs, configures, and registers a system to the [Red Hat Insights service](http://access.redhat.com/insights).  This role is intended to work on RHEL 6 or RHEL 7, though it will generally work on any yum based system that has access to the redhat-access-insights RPM.
+Installs, configures, and registers a system to the [Red Hat Insights service](http://access.redhat.com/insights).  This role is intended to work on RHEL 6 or RHEL 7, though it will generally work on any yum based system that has access to the insights-client RPM.
 
 Requirements
 ------------
@@ -35,7 +35,7 @@ Example Use
     $ ansible-galaxy install redhataccess.redhat-access-insights-client
     ```
 
-1. Copy the Example Playbook to a file named 'install-insights.yml'.
+1. Copy the Example Playbook above to a file named 'install-insights.yml'.
 
 1. Run the command, replacing 'myhost.example.com' with the name of the
    system where you want to install the insights client.

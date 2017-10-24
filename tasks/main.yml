@@ -1,17 +1,22 @@
 ---
 
-- name: Install Red Hat Access Insights Client
-  yum: name={{ item }} state=present
+- name: Install Red Hat Insights Client
+  yum: 
+    name: {{ item }} 
+    state: present
   with_items:
-      - redhat-access-insights
+    - insights-client 
 
-- name: Configure Red Hat Access Insights Client
-  template: src=insights-client.conf.j2 dest=/etc/redhat-access-insights/redhat-access-insights.conf
+- name: Configure Red Hat Insights Client
+  template:
+    src: insights-client.conf.j2
+    dest: /etc/insights-client/insights-client.conf
 
-- stat: path=/etc/redhat-access-insights/.unregistered
+- stat: 
+    path: /etc/insights-client/.unregistered
   register: unreg
 
 # Only register if this system hasn't been registered before
-- name: Register to the Red Hat Access Insights Service
-  command: redhat-access-insights --register creates=/etc/redhat-access-insights/.registered
+- name: Register to the Red Hat Insights Service
+  command: insights-client --register creates=/etc/insights-client/.registered
   when: unreg.stat.exists == false
