@@ -1,17 +1,39 @@
 ---
 
 - name: Install Red Hat Access Insights Client
-  yum: name={{ item }} state=present
+  yum:
+    state: present
+    name: "{{ item }}"
   with_items:
       - redhat-access-insights
 
 - name: Configure Red Hat Access Insights Client
-  template: src=insights-client.conf.j2 dest=/etc/redhat-access-insights/redhat-access-insights.conf
+  template:
+    src: insights-client.conf.j2
+    dest: /etc/redhat-access-insights/redhat-access-insights.conf
 
-- stat: path=/etc/redhat-access-insights/.unregistered
-  register: unreg
+- name: Check to see if there is an existing local registration
+  stat:
+    path: /etc/redhat-access-insights/machine-id
+  register: registration_file
 
-# Only register if this system hasn't been registered before
-- name: Register to the Red Hat Access Insights Service
-  command: redhat-access-insights --register creates=/etc/redhat-access-insights/.registered
-  when: unreg.stat.exists == false
+- name: Notify of existing registration
+  fail:
+    msg: "It appears that this system has previously been registered based on the presence of /etc/redhat-access-insights/machine-id. If this is incorrect, please rerun the registration with the --force-reregister flag"
+  when: registration_file.stat.exists
+
+- name: Register to the Red Hat Access Insights Service using the Ansible Inventory hostname
+  command: redhat-access-insights --register --display-name="{{inventory_hostname}}"
+  when: not registration_file.stat.exists
+
+
+# # Only register if this system hasn't been registered before
+# - name: Register to the Red Hat Access Insights Service using the Ansible Inventory hostname
+#   command: redhat-access-insights --register --display-name="{{inventory_hostname}}"
+#   when: not unreg.stat.exists
+#   changed_when:  not unreg.stat.exists
+#
+# - name: Notify of existing registration
+#   fail:
+#     msg: "It appears that this system has previously been registered based on the presence of /etc/redhat-access-insights/machine-id. If this is incorrect, please rerun the registration with the --force-reregister flag"
+#   when: unreg.stat.exists
