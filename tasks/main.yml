@@ -24,12 +24,9 @@
     - reg_file_task.stat.exists == true
   register: unreg_task
 
-- debug: var=unreg_task
-
 # Only register if this system hasn't been registered before
 - name: Register to the Red Hat Access Insights Service
   command: redhat-access-insights --register {{ '--display-name='+insights_display_name if insights_display_name is defined else '' }} creates=/etc/redhat-access-insights/.registered
   when: unreg_file_task.stat.exists == false
   register: reg_task
 
-- debug: var=reg_task
