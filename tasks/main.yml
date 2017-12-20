@@ -8,10 +8,28 @@
 - name: Configure Red Hat Access Insights Client
   template: src=insights-client.conf.j2 dest=/etc/redhat-access-insights/redhat-access-insights.conf
 
-- stat: path=/etc/redhat-access-insights/.unregistered
-  register: unreg
+- name: Check status of Insights .unregister file
+  stat: path=/etc/redhat-access-insights/.unregistered
+  register: unreg_file_task
+
+- name: Check status of Insights .register file
+  stat: path=/etc/redhat-access-insights/.registered
+  register: reg_file_task
+
+- name: Unregister if we are setting the display_name, and we have already registered
+  command: redhat-access-insights --unregister
+  when:
+    - insights_display_name is defined
+    - unreg_file_task.stat.exists == false
+    - reg_file_task.stat.exists == true
+  register: unreg_task
+
+- debug: var=unreg_task
 
 # Only register if this system hasn't been registered before
 - name: Register to the Red Hat Access Insights Service
-  command: redhat-access-insights --register creates=/etc/redhat-access-insights/.registered
-  when: unreg.stat.exists == false
+  command: redhat-access-insights --register {{ '--display-name='+insights_display_name if insights_display_name is defined else '' }} creates=/etc/redhat-access-insights/.registered
+  when: unreg_file_task.stat.exists == false
+  register: reg_task
+
+- debug: var=reg_task
