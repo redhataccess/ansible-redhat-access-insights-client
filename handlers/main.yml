@@ -1,0 +1,7 @@
+---
+- name: restart insights-client
+  service:
+    name: insights-client
+    state: restarted
+    enabled: yes
+  when: (( ansible_distribution == "RedHat" ) and ( ansible_distribution_version.split(".")[1]|int >= 5 ))

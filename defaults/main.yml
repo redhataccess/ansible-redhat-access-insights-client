@@ -1,0 +1,51 @@
+---
+# Change log level, valid options DEBUG, INFO, WARNING, ERROR, CRITICAL. Default DEBUG
+loglevel: INFO
+
+# Attempt to auto configure with Satellite server
+auto_config: True
+
+# Change authentication method, valid options BASIC, CERT. Default BASIC
+authmethod: BASIC
+
+# username to use when authmethod is BASIC
+username: ""
+# password to use when authmethod is BASIC
+password: ""
+
+#base_url: "cert-api.access.redhat.com:443/r/insights"
+
+# URL for your proxy.  Example: http://user:pass@192.168.100.50:8080
+#proxy: ""
+
+# Location of the certificate chain for api.access.redhat.com used for Certificate Pinning.
+# Valid options are True, False, or a path to the pinned certificate(s).
+#cert_verify: "/etc/redhat-access-insights/cert-api.access.redhat.com.pem"
+
+# Enable/Disable GPG verification of dynamic configuration
+#gpg: True
+
+# Automatically update the dynamic configuration
+#auto_update: True
+
+# Obfuscate IP addresses
+#obfuscate: False
+
+# Obfuscate hostname
+#obfuscate_hostname: False
+
+# Log each line executed
+#trace: False
+
+# Disallow Insights from creating cron job
+#no_schedule: False
+
+# Display name for registration
+insights_display_name: "{{ inventory_hostname }}"
+
+# replace the existing insights-client.conf with template version
+replace_config: yes
+
+#remove_file: ""
+
+force_register: False

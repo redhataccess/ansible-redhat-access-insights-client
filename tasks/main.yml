@@ -1,32 +1,91 @@
 ---
+- name: Configure Red Hat Access Insights Client 3.x
+  block:
+    - name: Installing insights-client if RHEL 7.5 or greater
+      yum:
+        name: "{{ item }}"
+        state: present
+      with_items:
+          - insights-client
 
-- name: Install Red Hat Access Insights Client
-  yum: name={{ item }} state=present
-  with_items:
-      - redhat-access-insights
+    - name: Check display name
+      command: grep "display_name={{ insights_display_name }}" /etc/insights-client/insights-client.conf
+      register: display_name_set
+      ignore_errors: yes
+      changed_when: no
+
+    - name: Copy insights-client v3 config template
+      template:
+        src: insights-client.conf.j2
+        dest: /etc/insights-client/insights-client.conf
+        backup: yes
+        force: "{{ replace_config }}"
+      notify: restart insights-client
+
+    - name: Check status of Insights .unregister file
+      stat:
+        path: /etc/insights-client/.unregistered
+      register: unreg_file_task
+
+    - name: Check status of Insights .register file
+      stat:
+        path: /etc/insights-client/.registered
+      register: reg_file_task
+
+    - name: Unregister if we are setting the display_name AND we have already registered
+      command: insights-client --unregister
+      when: ((insights_display_name is defined) and (unreg_file_task.stat.exists == false) and (reg_file_task.stat.exists == true) and (display_name_set.rc > 0)) or (force_register == True)
+      register: unreg_task
+
+    - name: Register to the Red Hat Access Insights Service if never previously registered
+      command: insights-client --register {{ '--display-name='+insights_display_name if insights_display_name is defined else '' }}
+      args:
+        creates: /etc/insights-client/.registered
+      when: (unreg_file_task.stat.exists == true) or (unreg_task.changed)
+      register: reg_task
+  when: (( ansible_distribution is match("RedHat") ) and (ansible_distribution_major_version|int >= 7 ) and ( ansible_distribution_version.split(".")[1]|int >= 5 ))
 
 - name: Configure Red Hat Access Insights Client
-  template: src=insights-client.conf.j2 dest=/etc/redhat-access-insights/redhat-access-insights.conf
+  block:
+    - name: Installs redhat-access-insights if RHEL 7.4 or lower
+      yum:
+        name: "{{ item }}"
+        state: present
+      with_items:
+          - redhat-access-insights
 
-- name: Check status of Insights .unregister file
-  stat: path=/etc/redhat-access-insights/.unregistered
-  register: unreg_file_task
+    - name: Check display name
+      command: grep "display_name={{ insights_display_name }}" /etc/redhat-access-insights/redhat-access-insights.conf
+      register: display_name_set
+      ignore_errors: yes
+      changed_when: no
 
-- name: Check status of Insights .register file
-  stat: path=/etc/redhat-access-insights/.registered
-  register: reg_file_task
+    - name: Copy v2 config template
+      template:
+        src: redhat-access-insights.conf.j2
+        dest: /etc/redhat-access-insights/redhat-access-insights.conf
+        backup: yes
+        force: "{{ replace_config }}"
 
-- name: Unregister if we are setting the display_name, and we have already registered
-  command: redhat-access-insights --unregister
-  when:
-    - insights_display_name is defined
-    - unreg_file_task.stat.exists == false
-    - reg_file_task.stat.exists == true
-  register: unreg_task
+    - name: Check status of Insights .unregister file
+      stat:
+        path: /etc/redhat-access-insights/.unregistered
+      register: unreg_file_task
 
-# Only register if this system hasn't been registered before
-- name: Register to the Red Hat Access Insights Service
-  command: redhat-access-insights --register {{ '--display-name='+insights_display_name if insights_display_name is defined else '' }} creates=/etc/redhat-access-insights/.registered
-  when: unreg_file_task.stat.exists == false
-  register: reg_task
+    - name: Check status of Insights .register file
+      stat:
+        path: /etc/redhat-access-insights/.registered
+      register: reg_file_task
 
+    - name: Unregister if we are setting the display_name AND we have already registered
+      command: redhat-access-insights --unregister
+      when: ((insights_display_name is defined) and (unreg_file_task.stat.exists == false) and (reg_file_task.stat.exists == true) and (display_name_set.rc > 0)) or (force_register == True)
+      register: unreg_task
+
+    - name: Register to the Red Hat Access Insights Service if never previously registered
+      command: redhat-access-insights --register {{ '--display-name='+insights_display_name if insights_display_name is defined else '' }}
+      args:
+        creates: /etc/redhat-access-insights/.registered
+      when: (unreg_file_task.stat.exists == true) or (unreg_task.changed)
+      register: reg_task
+  when: ((ansible_distribution is match("RedHat")) and (((ansible_distribution_major_version|int == 7 ) and ( ansible_distribution_version.split(".")[1]|int < 5 )) or (ansible_distribution_major_version|int < 7 )) )

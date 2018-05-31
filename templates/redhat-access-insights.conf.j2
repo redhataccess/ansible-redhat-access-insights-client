@@ -1,4 +1,4 @@
-[insights-client]
+[redhat-access-insights]
 # Example options in this file are the defaults
 
 {% if auto_config is defined %}
@@ -15,7 +15,6 @@ loglevel={{ loglevel }}
 # Log each line executed
 trace={{ trace }}
 {% endif %}
-
 
 {% if auto_config == False %}
 # Change authentication method, valid options BASIC, CERT. Default BASIC
@@ -67,12 +66,13 @@ obfuscate={{ obfuscate }}
 obfuscate_hostname={{ obfuscate_hostname }}
 {% endif %}
 
-{% if no_schedule is defined %}
-# Disallow Insights from creating cron job
-no_schedule={{ no_schedule }}
-{% endif %}
-
 {% if insights_display_name is defined %}
 # Display name for registration
 display_name={{ insights_display_name }}
 {% endif %}
+
+{% if cert_verify is defined %}
+# Location of the certificate chain for cert-api.access.redhat.com used for Certificate Pinning.  Valid options are True, False, or a path to the pinned certificate(s). 
+cert_verify={{ cert_verify }}
+{% endif %}
+
