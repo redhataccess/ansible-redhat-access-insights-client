@@ -49,3 +49,6 @@ replace_config: yes
 #remove_file: ""
 
 force_register: False
+
+#Options are hourly, daily, weekly, monthly.
+cron_schedule: daily

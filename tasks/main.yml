@@ -88,4 +88,10 @@
         creates: /etc/redhat-access-insights/.registered
       when: (unreg_file_task.stat.exists == true) or (unreg_task.changed)
       register: reg_task
+
+    - name: Create Cron Job for redhat-access-insights uploads
+      file:
+        src: /etc/redhat-access-insights/redhat-access-insights.cron
+        dest: /etc/cron.{{ cron_schedule }}/redhat-access-insights
+        state: link
   when: ((ansible_distribution is match("RedHat")) and (((ansible_distribution_major_version|int == 7 ) and ( ansible_distribution_version.split(".")[1]|int < 5 )) or (ansible_distribution_major_version|int < 7 )) )
