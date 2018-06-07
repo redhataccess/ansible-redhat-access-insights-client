@@ -43,11 +43,11 @@
         creates: /etc/insights-client/.registered
       when: (unreg_file_task.stat.exists == true) or (unreg_task.changed)
       register: reg_task
-  when: (( ansible_distribution is match("RedHat") ) and (ansible_distribution_major_version|int >= 7 ) and ( ansible_distribution_version.split(".")[1]|int >= 5 ))
+  when: (( ansible_distribution is match("RedHat") ) and (ansible_distribution_major_version|int >= 7 ) and ( ansible_distribution_version.split(".")[1]|int >= 4 ))
 
 - name: Configure Red Hat Access Insights Client
   block:
-    - name: Installs redhat-access-insights if RHEL 7.4 or lower
+    - name: Installs redhat-access-insights if RHEL 7.3 or lower
       yum:
         name: "{{ item }}"
         state: present
@@ -94,4 +94,4 @@
         src: /etc/redhat-access-insights/redhat-access-insights.cron
         dest: /etc/cron.{{ cron_schedule }}/redhat-access-insights
         state: link
-  when: ((ansible_distribution is match("RedHat")) and (((ansible_distribution_major_version|int == 7 ) and ( ansible_distribution_version.split(".")[1]|int < 5 )) or (ansible_distribution_major_version|int < 7 )) )
+  when: ((ansible_distribution is match("RedHat")) and (((ansible_distribution_major_version|int == 7 ) and ( ansible_distribution_version.split(".")[1]|int < 4 )) or (ansible_distribution_major_version|int < 7 )) )
